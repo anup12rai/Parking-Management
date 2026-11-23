@@ -1,0 +1,130 @@
+
+{% extends "base.html" %}
+
+{% block title %}Parking History | ParkSmart{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Parking History</h2>
+        <p>View vehicle entry, exit and payment records.</p>
+    </div>
+</div>
+
+<div class="content-card">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5>All Parking Records</h5>
+
+        <span class="badge bg-primary">
+            {{ records|length }} Records
+        </span>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table align-middle">
+
+            <thead>
+                <tr>
+                    <th>Record ID</th>
+                    <th>Vehicle</th>
+                    <th>Owner</th>
+                    <th>Slot</th>
+                    <th>Entry Time</th>
+                    <th>Exit Time</th>
+                    <th>Duration</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for record in records %}
+
+                <tr>
+
+                    <td>#{{ record.id }}</td>
+
+                    <td>
+                        <strong>{{ record.vehicle_number }}</strong>
+                        <br>
+                        <small class="text-muted">
+                            {{ record.vehicle_type|title }}
+                        </small>
+                    </td>
+
+                    <td>{{ record.owner_name }}</td>
+
+                    <td>{{ record.slot_number }}</td>
+
+                    <td>
+                        {{ record.entry_time.strftime('%d %b %Y %I:%M %p') }}
+                    </td>
+
+                    <td>
+                        {% if record.exit_time %}
+                            {{ record.exit_time.strftime('%d %b %Y %I:%M %p') }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if record.duration_minutes is not none %}
+                            {{ record.duration_minutes }} min
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if record.total_amount is not none %}
+                            NPR {{ "%.2f"|format(record.total_amount) }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if record.payment_status %}
+                            {{ record.payment_method|title }}
+                            <br>
+                            <small>{{ record.payment_status|title }}</small>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if record.status == 'active' %}
+                            <span class="status-badge occupied">Active</span>
+                        {% else %}
+                            <span class="status-badge completed">Completed</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="10" class="text-center text-muted py-4">
+                        No parking history found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

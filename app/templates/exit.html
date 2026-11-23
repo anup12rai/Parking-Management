@@ -1,0 +1,121 @@
+
+{% extends "base.html" %}
+
+{% block title %}Vehicle Exit | ParkSmart{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Vehicle Exit</h2>
+        <p>Process vehicle departure and parking payment.</p>
+    </div>
+</div>
+
+<div class="content-card">
+    <h5 class="mb-4">Active Parking Records</h5>
+
+    {% if active_records %}
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Vehicle Number</th>
+                    <th>Owner</th>
+                    <th>Parking Slot</th>
+                    <th>Entry Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for record in active_records %}
+                <tr>
+                    <td><strong>{{ record.vehicle_number }}</strong></td>
+                    <td>{{ record.owner_name }}</td>
+                    <td>{{ record.slot_number }}</td>
+                    <td>{{ record.entry_time }}</td>
+
+                    <td>
+                        <button
+                            class="btn btn-primary btn-sm"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#exitModal{{ record.id }}">
+                            Process Exit
+                        </button>
+
+                        <div class="modal fade" id="exitModal{{ record.id }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Confirm Vehicle Exit</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+
+                                    <form method="POST" action="{{ url_for('parking.exit_vehicle') }}">
+                                        <div class="modal-body">
+
+                                            <p>
+                                                Vehicle:
+                                                <strong>{{ record.vehicle_number }}</strong>
+                                            </p>
+
+                                            <p>
+                                                Parking Slot:
+                                                <strong>{{ record.slot_number }}</strong>
+                                            </p>
+
+                                            <input type="hidden" name="record_id" value="{{ record.id }}">
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Payment Method</label>
+                                                <select name="payment_method" class="form-select" required>
+                                                    <option value="cash">Cash</option>
+                                                    <option value="card">Card</option>
+                                                    <option value="online">Online</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="alert alert-info">
+                                                The parking fee will be calculated automatically.
+                                            </div>
+
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Cancel
+                                            </button>
+
+                                            <button type="submit" class="btn btn-success">
+                                                Confirm Exit
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+    <div class="text-center py-5">
+        <h5>No Active Vehicles</h5>
+        <p class="text-muted">There are currently no vehicles inside the parking area.</p>
+        <a href="{{ url_for('parking.entry') }}" class="btn btn-primary">
+            Register Vehicle Entry
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

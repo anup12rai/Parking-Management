@@ -1,0 +1,115 @@
+
+{% extends "base.html" %}
+
+{% block title %}Parking Slots | ParkSmart{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Parking Slot Management</h2>
+        <p>Create and monitor parking spaces.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <!-- Add slot -->
+    <div class="col-lg-4">
+
+        <div class="content-card">
+
+            <h5 class="mb-4">Add New Parking Slot</h5>
+
+            <form method="POST">
+
+                <div class="mb-3">
+                    <label class="form-label">Slot Number</label>
+
+                    <input
+                        type="text"
+                        name="slot_number"
+                        class="form-control"
+                        placeholder="Example: B-04"
+                        required
+                    >
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Allowed Vehicle Type</label>
+
+                    <select
+                        name="allowed_vehicle_type"
+                        class="form-select"
+                        required
+                    >
+                        <option value="any">Any Vehicle</option>
+                        <option value="bike">Bike</option>
+                        <option value="car">Car</option>
+                        <option value="truck">Truck</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-plus me-2"></i>
+                    Add Parking Slot
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- Slot list -->
+    <div class="col-lg-8">
+
+        <div class="content-card">
+
+            <h5 class="mb-4">Parking Slots</h5>
+
+            <div class="row g-3">
+
+                {% for slot in slots %}
+
+                <div class="col-md-4 col-sm-6">
+
+                    <div class="parking-slot
+                        {% if slot.status == 'available' %}slot-available
+                        {% elif slot.status == 'occupied' %}slot-occupied
+                        {% else %}slot-maintenance{% endif %}">
+
+                        <i class="fas fa-square-parking"></i>
+
+                        <h5>{{ slot.slot_number }}</h5>
+
+                        <p>{{ slot.allowed_vehicle_type|title }}</p>
+
+                        <span>
+                            {{ slot.status|title }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="col-12">
+                    <p class="text-center text-muted">
+                        No parking slots available.
+                    </p>
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,145 @@
+
+{% extends "base.html" %}
+
+{% block title %}Vehicles | ParkSmart{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Vehicle Management</h2>
+        <p>Register and manage parking vehicles.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <!-- Add Vehicle Form -->
+    <div class="col-lg-4">
+
+        <div class="content-card">
+
+            <h5 class="mb-4">Register New Vehicle</h5>
+
+            <form method="POST" action="{{ url_for('parking.vehicles') }}">
+
+                <div class="mb-3">
+                    <label class="form-label">Vehicle Number</label>
+                    <input
+                        type="text"
+                        name="vehicle_number"
+                        class="form-control"
+                        placeholder="Example: BA 01 PA 1234"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Owner Name</label>
+                    <input
+                        type="text"
+                        name="owner_name"
+                        class="form-control"
+                        placeholder="Enter owner name"
+                        required
+                    >
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Vehicle Type</label>
+
+                    <select name="vehicle_type" class="form-select" required>
+                        <option value="">Select vehicle type</option>
+                        <option value="bike">Bike</option>
+                        <option value="car">Car</option>
+                        <option value="truck">Truck</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fa-solid fa-plus me-2"></i>
+                    Register Vehicle
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- Vehicle List -->
+    <div class="col-lg-8">
+
+        <div class="content-card">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5>Registered Vehicles</h5>
+                <span class="badge bg-primary">
+                    {{ vehicles|length }} Vehicles
+                </span>
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Vehicle Number</th>
+                            <th>Owner</th>
+                            <th>Type</th>
+                            <th>Registered</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for vehicle in vehicles %}
+
+                        <tr>
+                            <td>{{ loop.index }}</td>
+
+                            <td>
+                                <strong>
+                                    {{ vehicle.vehicle_number }}
+                                </strong>
+                            </td>
+
+                            <td>{{ vehicle.owner_name }}</td>
+
+                            <td>
+                                <span class="type-badge">
+                                    {{ vehicle.vehicle_type|capitalize }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {{ vehicle.created_at }}
+                            </td>
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                No vehicles registered yet.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

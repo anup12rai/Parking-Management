@@ -1,0 +1,203 @@
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | ParkSmart{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Dashboard</h2>
+        <p>Welcome to your parking management overview.</p>
+    </div>
+
+    <a href="{{ url_for('parking.entry') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i> New Entry
+    </a>
+</div>
+
+<!-- Statistics -->
+<div class="row g-4 mb-4">
+
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-car"></i>
+            </div>
+
+            <div>
+                <p>Total Vehicles</p>
+                <h3>{{ total_vehicles }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-square-parking"></i>
+            </div>
+
+            <div>
+                <p>Total Slots</p>
+                <h3>{{ total_slots }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="fas fa-car-side"></i>
+            </div>
+
+            <div>
+                <p>Occupied Slots</p>
+                <h3>{{ occupied_slots }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fas fa-wallet"></i>
+            </div>
+
+            <div>
+                <p>Today's Revenue</p>
+                <h3>NPR {{ "%.2f"|format(today_revenue) }}</h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Slot overview -->
+<div class="row g-4 mb-4">
+
+    <div class="col-md-6">
+        <div class="content-card">
+            <h5>Parking Availability</h5>
+
+            <div class="availability-info">
+                <div>
+                    <h2 class="text-success">{{ available_slots }}</h2>
+                    <span>Available Slots</span>
+                </div>
+
+                <div>
+                    <h2 class="text-danger">{{ occupied_slots }}</h2>
+                    <span>Occupied Slots</span>
+                </div>
+            </div>
+
+            {% set occupancy = (occupied_slots / total_slots * 100) if total_slots else 0 %}
+
+            <div class="progress mt-3" style="height: 12px;">
+                <div
+                    class="progress-bar bg-primary"
+                    style="width: {{ occupancy }}%"
+                ></div>
+            </div>
+
+            <small class="text-muted">
+                {{ "%.1f"|format(occupancy) }}% occupancy
+            </small>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="content-card">
+            <h5>Currently Parked Vehicles</h5>
+
+            <div class="active-vehicle-number">
+                <i class="fas fa-car-side"></i>
+                <h1>{{ active_vehicles }}</h1>
+            </div>
+
+            <p class="text-muted mb-0">
+                Vehicles currently inside the parking area.
+            </p>
+
+            <a href="{{ url_for('parking.exit_vehicle') }}" class="btn btn-outline-primary mt-3">
+                Process Vehicle Exit
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<!-- Recent records -->
+<div class="content-card">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5>Recent Parking Activity</h5>
+
+        <a href="{{ url_for('parking.history') }}" class="btn btn-sm btn-outline-primary">
+            View All
+        </a>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table align-middle">
+
+            <thead>
+                <tr>
+                    <th>Record ID</th>
+                    <th>Vehicle Number</th>
+                    <th>Type</th>
+                    <th>Parking Slot</th>
+                    <th>Entry Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for record in recent_records %}
+
+                <tr>
+                    <td>#{{ record.id }}</td>
+
+                    <td>
+                        <strong>{{ record.vehicle_number }}</strong>
+                    </td>
+
+                    <td>{{ record.vehicle_type|title }}</td>
+
+                    <td>{{ record.slot_number }}</td>
+
+                    <td>
+                        {{ record.entry_time.strftime('%d %b %Y, %I:%M %p') }}
+                    </td>
+
+                    <td>
+                        {% if record.status == 'active' %}
+                            <span class="status-badge occupied">Active</span>
+                        {% else %}
+                            <span class="status-badge completed">Completed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        No parking records available.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

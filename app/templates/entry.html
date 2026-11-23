@@ -1,0 +1,123 @@
+
+{% extends "base.html" %}
+
+{% block title %}Vehicle Entry | ParkSmart{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Vehicle Entry</h2>
+        <p>Register a vehicle entering the parking area.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <div class="col-lg-6">
+
+        <div class="content-card">
+
+            <h5 class="mb-4">Assign Parking Slot</h5>
+
+            <form method="POST" action="{{ url_for('parking.entry') }}">
+
+                <div class="mb-3">
+                    <label class="form-label">Select Vehicle</label>
+
+                    <select name="vehicle_id" class="form-select" required>
+                        <option value="">Choose vehicle</option>
+
+                        {% for vehicle in vehicles %}
+                        <option value="{{ vehicle.id }}">
+                            {{ vehicle.vehicle_number }} -
+                            {{ vehicle.owner_name }} -
+                            {{ vehicle.vehicle_type|capitalize }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Select Available Slot</label>
+
+                    <select name="slot_id" class="form-select" required>
+                        <option value="">Choose parking slot</option>
+
+                        {% for slot in slots %}
+                        <option value="{{ slot.id }}">
+                            {{ slot.slot_number }} -
+                            {{ slot.allowed_vehicle_type|capitalize }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                {% if not vehicles %}
+                <div class="alert alert-warning">
+                    No vehicles available for parking. Register a vehicle first.
+                </div>
+                {% endif %}
+
+                {% if not slots %}
+                <div class="alert alert-warning">
+                    No available parking slots.
+                </div>
+                {% endif %}
+
+                <button
+                    type="submit"
+                    class="btn btn-primary w-100"
+                    {% if not vehicles or not slots %}disabled{% endif %}
+                >
+                    <i class="fa-solid fa-square-parking me-2"></i>
+                    Confirm Vehicle Entry
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-6">
+
+        <div class="content-card">
+
+            <h5 class="mb-4">Available Parking Slots</h5>
+
+            <div class="row g-3">
+
+                {% for slot in slots %}
+
+                <div class="col-md-6">
+                    <div class="parking-slot slot-available">
+                        <h5>{{ slot.slot_number }}</h5>
+                        <span>Available</span>
+                        <small>
+                            {{ slot.allowed_vehicle_type|capitalize }}
+                        </small>
+                    </div>
+                </div>
+
+                {% else %}
+
+                <div class="col-12">
+                    <p class="text-muted">
+                        No available slots currently.
+                    </p>
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
