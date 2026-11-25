@@ -34,8 +34,6 @@ def login_required(function):
 
     return wrapper
 
-
-# Home route
 @auth_bp.route("/")
 def index():
 
@@ -44,10 +42,6 @@ def index():
 
     return redirect(url_for("auth.login"))
 
-
-# ==========================
-# LOGIN
-# ==========================
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
@@ -110,11 +104,6 @@ def login():
                 db.close()
 
     return render_template("login.html")
-
-
-# ==========================
-# CREATE ACCOUNT
-# ==========================
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
@@ -195,10 +184,6 @@ def register():
 
     return render_template("register.html")
 
-
-# ==========================
-# LOGOUT
-# ==========================
 
 @auth_bp.route("/logout", methods=["POST"])
 @login_required
