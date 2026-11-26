@@ -91,7 +91,7 @@ VALUES
 ('truck', 100.00),
 ('other', 30.00);
 
--- Initial parking slots
+
 INSERT IGNORE INTO parking_slots
 (slot_number, allowed_vehicle_type)
 VALUES

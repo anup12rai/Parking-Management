@@ -20,8 +20,6 @@ from app.database import get_db
 
 auth_bp = Blueprint("auth", __name__)
 
-
-# Login protection decorator
 def login_required(function):
     @wraps(function)
     def wrapper(*args, **kwargs):

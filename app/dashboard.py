@@ -17,19 +17,19 @@ def index():
     try:
         with db.cursor() as cursor:
 
-            # Total registered vehicles
+            
             cursor.execute(
                 "SELECT COUNT(*) AS total FROM vehicles"
             )
             total_vehicles = cursor.fetchone()["total"]
 
-            # Total parking slots
+            
             cursor.execute(
                 "SELECT COUNT(*) AS total FROM parking_slots"
             )
             total_slots = cursor.fetchone()["total"]
 
-            # Available parking slots
+            
             cursor.execute(
                 """
                 SELECT COUNT(*) AS total
@@ -39,7 +39,7 @@ def index():
             )
             available_slots = cursor.fetchone()["total"]
 
-            # Occupied parking slots
+            
             cursor.execute(
                 """
                 SELECT COUNT(*) AS total
@@ -49,7 +49,7 @@ def index():
             )
             occupied_slots = cursor.fetchone()["total"]
 
-            # Currently parked vehicles
+            
             cursor.execute(
                 """
                 SELECT COUNT(*) AS total
@@ -59,7 +59,7 @@ def index():
             )
             active_vehicles = cursor.fetchone()["total"]
 
-            # Today's revenue
+            
             cursor.execute(
                 """
                 SELECT COALESCE(SUM(amount), 0) AS revenue
@@ -70,7 +70,7 @@ def index():
             )
             today_revenue = cursor.fetchone()["revenue"]
 
-            # Recent parking activity
+            
             cursor.execute(
                 """
                 SELECT

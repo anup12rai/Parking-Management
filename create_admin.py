@@ -7,10 +7,10 @@ from app.database import get_db
 
 def create_admin():
 
-    print("\n====================================")
+   
     print("  PARKING MANAGEMENT SYSTEM")
     print("       CREATE ADMIN ACCOUNT")
-    print("====================================\n")
+  
 
     name = input("Enter admin name: ").strip()
     email = input("Enter admin email: ").strip().lower()
@@ -18,7 +18,7 @@ def create_admin():
     password = getpass("Enter admin password: ")
     confirm_password = getpass("Confirm admin password: ")
 
-    # Validate input
+    
     if not name or not email or not password:
         print("\nError: All fields are required.")
         return
@@ -38,7 +38,7 @@ def create_admin():
 
         with db.cursor() as cursor:
 
-            # Check whether email already exists
+            
             cursor.execute(
                 "SELECT id FROM users WHERE email = %s",
                 (email,)
@@ -50,10 +50,10 @@ def create_admin():
                 print("\nError: This email is already registered.")
                 return
 
-            # Securely hash password
+            
             password_hash = generate_password_hash(password)
 
-            # Insert administrator into database
+            
             cursor.execute(
                 """
                 INSERT INTO users

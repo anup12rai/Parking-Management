@@ -14,14 +14,8 @@ from app.auth import login_required
 
 parking_bp = Blueprint("parking", __name__)
 
-
 VEHICLE_TYPES = ("bike", "car", "truck", "other")
 SLOT_TYPES = ("any", "bike", "car", "truck", "other")
-
-
-# --------------------------------------------------
-# 1. VEHICLE REGISTRATION
-# --------------------------------------------------
 
 @parking_bp.route("/vehicles", methods=["GET", "POST"])
 @login_required
@@ -98,10 +92,6 @@ def vehicles():
     )
 
 
-# --------------------------------------------------
-# 2. PARKING SLOT MANAGEMENT
-# --------------------------------------------------
-
 @parking_bp.route("/slots", methods=["GET", "POST"])
 @login_required
 def slots():
@@ -168,11 +158,6 @@ def slots():
         slots=slot_list
     )
 
-
-# --------------------------------------------------
-# 3. VEHICLE ENTRY
-# --------------------------------------------------
-
 @parking_bp.route("/entry", methods=["GET", "POST"])
 @login_required
 def entry():
@@ -191,7 +176,7 @@ def entry():
         try:
             with db.cursor() as cursor:
 
-                # Lock the selected vehicle
+                
                 cursor.execute(
                     """
                     SELECT *
@@ -206,7 +191,7 @@ def entry():
                 if not vehicle:
                     raise ValueError("Vehicle not found.")
 
-                # Check whether the vehicle is already parked
+                
                 cursor.execute(
                     """
                     SELECT id
@@ -223,7 +208,7 @@ def entry():
                         "This vehicle is already parked."
                     )
 
-                # Lock and validate the parking slot
+                
                 cursor.execute(
                     """
                     SELECT *
@@ -249,7 +234,7 @@ def entry():
                         "for the selected vehicle."
                     )
 
-                # Create parking entry record
+                
                 cursor.execute(
                     """
                     INSERT INTO parking_records
@@ -259,7 +244,7 @@ def entry():
                     (vehicle_id, slot_id)
                 )
 
-                # Mark slot as occupied
+                
                 cursor.execute(
                     """
                     UPDATE parking_slots
@@ -281,7 +266,7 @@ def entry():
     try:
         with db.cursor() as cursor:
 
-            # Vehicles not currently parked
+            
             cursor.execute(
                 """
                 SELECT v.*
@@ -297,7 +282,7 @@ def entry():
             )
             vehicle_list = cursor.fetchall()
 
-            # Available compatible slots
+           
             cursor.execute(
                 """
                 SELECT *
@@ -317,10 +302,6 @@ def entry():
         slots=slot_list
     )
 
-
-# --------------------------------------------------
-# 4. VEHICLE EXIT AND PAYMENT
-# --------------------------------------------------
 
 @parking_bp.route("/exit", methods=["GET", "POST"])
 @login_required
@@ -347,7 +328,7 @@ def exit_vehicle():
         try:
             with db.cursor() as cursor:
 
-                # Lock the active parking record
+                
                 cursor.execute(
                     """
                     SELECT
@@ -372,7 +353,7 @@ def exit_vehicle():
                         "Active parking record not found."
                     )
 
-                # Calculate parking duration in minutes
+                
                 cursor.execute(
                     """
                     SELECT GREATEST(
@@ -391,13 +372,13 @@ def exit_vehicle():
 
                 duration = cursor.fetchone()["duration"]
 
-                # Charge for every started hour
+                
                 billed_hours = max(
                     1,
                     (duration + 59) // 60
                 )
 
-                # Get hourly price
+                
                 cursor.execute(
                     """
                     SELECT hourly_rate
@@ -419,7 +400,7 @@ def exit_vehicle():
                     pricing["hourly_rate"] * billed_hours
                 )
 
-                # Complete parking record
+                
                 cursor.execute(
                     """
                     UPDATE parking_records
@@ -443,7 +424,7 @@ def exit_vehicle():
                         "Could not complete this parking record."
                     )
 
-                # Make parking slot available again
+                
                 cursor.execute(
                     """
                     UPDATE parking_slots
@@ -459,7 +440,7 @@ def exit_vehicle():
                         "Could not release the parking slot."
                     )
 
-                # Save payment
+                
                 cursor.execute(
                     """
                     INSERT INTO payments
@@ -521,11 +502,6 @@ def exit_vehicle():
         "exit.html",
         active_records=active_records
     )
-
-
-# --------------------------------------------------
-# 5. PARKING HISTORY
-# --------------------------------------------------
 
 @parking_bp.route("/history")
 @login_required
